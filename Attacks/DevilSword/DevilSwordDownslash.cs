@@ -37,10 +37,15 @@ namespace VesselMayCrySE.Attacks.DevilSword
 
         public override void CreateAttack()
         {
-            CreateRedSlash();
+            CreateRedSlash();            
 
             fsm = HeroController.instance.gameObject.LocateMyFSM("Crest Attacks");
-            if (fsm == null) { VesselMayCrySEPlugin.Instance.LogError("VMCSE - Sprint not found."); return; }
+            if (fsm == null) { VesselMayCrySEPlugin.Instance.LogError("VMCSE - Crest Attacks not found."); return; }
+
+            //patching downslash event
+            downslashObject.GetComponent<DamageEnemies>().dealtDamageFSM = fsm;
+            downslashObject.GetComponent<DamageEnemies>().dealtDamageFSMEvent = "ATTACK LANDED";
+            downslashObject.GetComponent<DamageEnemies>().contactFSMEvent = "ATTACK LANDED";
 
             FsmOwnerDefault hornetOwnerDefault = Helper.GetHornetOwnerDefault();
 
@@ -93,6 +98,8 @@ namespace VesselMayCrySE.Attacks.DevilSword
                 HeroController.instance.gameObject.GetComponent<Rigidbody2D>().SetVelocity(0, 0);
                 HeroController.instance.SetCState("downAttacking", false);
                 HeroController.instance.FinishDownspike(true);
+
+                HeroController.instance.animCtrl.StartControlToIdle();
             });
 
             //Slash bounce state
@@ -103,6 +110,8 @@ namespace VesselMayCrySE.Attacks.DevilSword
                 HeroController.instance.gameObject.GetComponent<Rigidbody2D>().SetVelocity(0, 0);
                 HeroController.instance.SetCState("downAttacking", false);
                 HeroController.instance.SetStartWithDownSpikeBounce();
+
+                HeroController.instance.animCtrl.StartControlToIdle();
             });
 
             //Transitions

@@ -82,6 +82,13 @@ namespace VesselMayCrySE.Weapons
                 //But only the SECOND time the game loads.
                 spellfsm.ChangeState(spell.GetGlobalEvent());
             }
+
+
+            //Taking silk if not in easy mode
+            if (handler.GetCurrentDifficulty() != Difficulties.DevilDifficulty.EASY)
+            {
+                HeroController.instance.TakeSilk(1);
+            }
         }
 
         public void UpSpell()

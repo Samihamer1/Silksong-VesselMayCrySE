@@ -9,6 +9,7 @@ namespace VesselMayCrySE.Components
         private GameObject? StyleRoot;
         private GameObject[] StyleForegrounds = new GameObject[7];
         private GameObject[] StyleBackgrounds = new GameObject[7];
+        private float[] damageMultipliers = { 0.2f, 0.4f, 0.6f, 1f, 1.2f, 1.4f, 1.5f };
         private float[] meterlevels = { 20, 40, 55, 70, 75, 80, 90 };
         private Dictionary<string, float> recentlyHitAttacks = new Dictionary<string, float>();
         private int attackStackSize = 6; // how many differently named attacks can be currently stored for scaling style gain
@@ -142,6 +143,15 @@ namespace VesselMayCrySE.Components
             recentlyHitAttacks.Remove(largestKey);
             recentlyHitAttacks[nameOfAttack] = 1;
             return gainedStyle;
+        }
+
+        /// <summary>
+        /// Returns current damage multiplier based on style rank. For use in Hard mode.
+        /// </summary>
+        /// <returns>Damage Multiplier</returns>
+        public float GetDamageMultiplier()
+        {
+            return damageMultipliers[rank];
         }
 
         public void HitLanded(HitInstance instance)

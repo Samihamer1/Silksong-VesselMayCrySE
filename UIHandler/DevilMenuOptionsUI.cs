@@ -12,16 +12,25 @@ namespace VesselMayCrySE.UIHandler
             if (pageRoot == null) { return; }
             pageRoot.name = "Devil Menu Options";
 
-            Vector3 origPos = new Vector3(-10.7f, 4.2f, -30);
-            Vector3 addon = new Vector3(0, -2, 0);
+            SetScrollDetails(-10.7f, -2);
+            Vector3 origPos = new Vector3(-10.7f, 0, -30);
 
-            InventoryItemSelectableButtonEvent? skillListButton = DevilMenuUI.CreateTextButton("Skill List", "SKILL_LIST", origPos, pageRoot);
+            InventoryItemSelectableButtonEvent? skillListButton = DevilMenuUI.CreateTextButton("Skill List", "SKILL_LIST", origPos, scrollRoot);
             skillListButton.ButtonActivated += ActivateSkillList;
             SetDefaultButton(skillListButton);
 
-            origPos += addon;
-            InventoryItemSelectableButtonEvent? backButton = DevilMenuUI.CreateTextButton("Back", "BACK", origPos, pageRoot);
+            InventoryItemSelectableButtonEvent? difficultyButton = DevilMenuUI.CreateTextButton("Difficulty", "DIFFICULTY", origPos, scrollRoot);
+            difficultyButton.ButtonActivated += ActivateDifficulty;
+
+            InventoryItemSelectableButtonEvent? backButton = DevilMenuUI.CreateTextButton("Back", "BACK", origPos, scrollRoot);
             backButton.ButtonActivated += ReturnToPreviousPage;
+        }
+
+        private void ActivateDifficulty()
+        {
+            DevilDifficultyUI difficultyUI = gameObject.GetComponent<DevilDifficultyUI>();
+            if (difficultyUI == null) { return; }
+            DevilMenuUI.TraverseToPage(difficultyUI);
         }
 
         private void ReturnToPreviousPage()

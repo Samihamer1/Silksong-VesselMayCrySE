@@ -114,4 +114,21 @@ namespace VesselMayCrySE
         public static readonly Color DanteRed = new Color(1, 0.25f, 0.25f, 0.5f);
         public static readonly Color CerberusBlue = new Color(0.75f, 0.85f, 1, 1);
     }
+
+    internal static class Difficulties
+    {
+        public enum DevilDifficulty
+        {
+            EASY,
+            STANDARD,
+            HARD
+        }
+
+        public static readonly Dictionary<string, DevilDifficulty> DifficultyList = new Dictionary<string, DevilDifficulty>()
+        {
+            ["DIFFICULTY_EASY"] = DevilDifficulty.EASY,
+            ["DIFFICULTY_STANDARD"] = DevilDifficulty.STANDARD,
+            ["DIFFICULTY_HARD"] = DevilDifficulty.HARD,
+        };
+    }
 }

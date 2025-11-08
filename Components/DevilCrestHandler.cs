@@ -16,6 +16,9 @@ namespace VesselMayCrySE.Components
 {
     public class DevilCrestHandler : MonoBehaviour
     {
+        public static DevilCrestHandler? Instance { get; private set; }
+        private static Difficulties.DevilDifficulty currentDifficulty = Difficulties.DevilDifficulty.STANDARD;
+
         private List<WeaponBase> allWeapons = new List<WeaponBase>();
 
         private List<WeaponBase> equippedWeapons = new List<WeaponBase>();        
@@ -32,6 +35,21 @@ namespace VesselMayCrySE.Components
         private int castQueueSteps = 0;
 
         private bool airCharge = true; //used for reactor bounce
+
+        internal void ChangeDifficulty(Difficulties.DevilDifficulty newDifficulty)
+        {
+            currentDifficulty = newDifficulty;
+        }
+
+        internal Difficulties.DevilDifficulty GetCurrentDifficulty()
+        {
+            return currentDifficulty;
+        }
+
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         public void Start()
         {
@@ -373,6 +391,11 @@ namespace VesselMayCrySE.Components
             styleMeter.LargeLoss();
         }
 
+        public StyleMeter? GetStyleMeter()
+        {
+            return styleMeter;
+        }
+
         #region helpers
 
         public bool IsDevilEquipped()
@@ -411,6 +434,15 @@ namespace VesselMayCrySE.Components
             SetDevilState.GetAction<SetIntValue>(0).intValue = 2; //Heal amount
             SetDevilState.GetAction<SetIntValue>(1).intValue = 1; //Bind amount (how many times you bind in a row)
             SetDevilState.GetAction<SetFloatValue>(2).floatValue = 1.2f; //Bind time
+            SetDevilState.AddMethod(_ => {
+                SetDevilState.GetAction<SetIntValue>(0).intValue = 2;
+
+                //More heal in easy mode
+                if (currentDifficulty == Difficulties.DevilDifficulty.EASY)
+                {
+                    SetDevilState.GetAction<SetIntValue>(0).intValue = 3;
+                }
+            });
 
             //Transitions
             spellControl.AddTransition("Bind Type", "DEVIL", SetDevilState.name);

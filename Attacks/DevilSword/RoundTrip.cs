@@ -51,7 +51,7 @@ namespace VesselMayCrySE.Attacks.DevilSword
                     activeSword.name = AttackNames.ROUNDTRIPRED;
                     activeSword.GetComponent<tk2dSprite>().color = new Color(1, 0.25f, 0.25f, 0.5f);
                     activeSword.GetComponent<DamageEnemies>().stepsPerHit = 6;
-                    activeSword.GetComponent<DamageEnemies>().nailDamageMultiplier = 0.1f;
+                    activeSword.GetComponent<DamageEnemies>().nailDamageMultiplier = 0.15f;
                 }
             });
 

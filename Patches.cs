@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using TeamCherry.Localization;
 using UnityEngine;
+using UnityEngine.UIElements;
 using VesselMayCrySE.AnimationHandler;
 using VesselMayCrySE.Components;
 using VesselMayCrySE.EffectHandler;
@@ -58,22 +59,35 @@ public static class Patches
 
     //Patching TakeDamage to know when enemies are hit
     [HarmonyPatch(typeof(HealthManager), nameof(HealthManager.TakeDamage))]
-    [HarmonyPostfix]
+    [HarmonyPrefix]
     private static void SendHitToManager(ref HitInstance hitInstance)
     {
         if (HeroController.instance == null) { return; }
 
-        DevilCrestHandler handler = HeroController.instance.GetComponent<DevilCrestHandler>();
+        DevilCrestHandler handler = HeroController.instance.gameObject.GetComponent<DevilCrestHandler>();
         if (handler == null) { return; }
 
         handler.HitLanded(hitInstance);
 
+
         if (!hitInstance.IsHeroDamage) { return; } //Must be a hero attack
         if (!handler.IsDevilEquipped()) { return; } // Must have devil crest equipped
+
+        //Apply style damage nerfs if in Hard Mode
+        if (handler.GetCurrentDifficulty() == Difficulties.DevilDifficulty.HARD) {
+
+            StyleMeter? style = handler.GetStyleMeter();
+            if (style != null) {
+                hitInstance.Multiplier *= style.GetDamageMultiplier(); //Apply damage multiplier based on style rank
+            }
+        }
+
+        
+        //Continue with base nerf
         if (handler.GetTrigger().IsInTrigger()) { return; } // If in trigger, ignore the damage nerf
         
-
-        hitInstance.Multiplier *= 0.75f; //Reduce player damage by 25% while using Devil. This is for balancing purposes, and for longer combos.
+        if (handler.GetCurrentDifficulty() != Difficulties.DevilDifficulty.STANDARD) { return; } //Only Standard has this nerf. Hard gets the style variant.
+        hitInstance.Multiplier *= 0.75f; //Reduce player damage by 25% while using Devil.
     }
 
     //Patching TakeDamage to know when player was hit

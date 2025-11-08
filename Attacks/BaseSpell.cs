@@ -37,12 +37,20 @@ namespace VesselMayCrySE.Attacks
 
         public bool OnCooldown()
         {
+            //Addon for if you don't have the silk for the skill in non Easy mode
+            if (handler.GetCurrentDifficulty() != Difficulties.DevilDifficulty.EASY && HeroController.instance.playerData.silk == 0)
+            {
+                return true;
+            }
+
+            //Time check
             float currentTime = Time.time;
 
             if (currentTime-lastUsedTime >= cooldown)
             {
                 return false;
             }
+
             return true;
         }
 

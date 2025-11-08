@@ -1,21 +1,25 @@
-﻿using System;
+﻿using Mono.WebBrowser;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using TeamCherry.Localization;
-using TMPro;
+using TMProOld;
 using UnityEngine;
+using UnityEngine.UI;
+using VesselMayCrySE.AnimationHandler;
+using VesselMayCrySE.EffectHandler;
 
 namespace VesselMayCrySE.UIHandler
 {
-    internal class DevilSkillPageUI : DevilMenuPage
+    internal class DevilSkillPageUI : DevilPanelPage
     {
         private List<GameObject> baseLists = new List<GameObject>();
         private Dictionary<string, InventoryItemSelectableButtonEvent> defaultButtons = new Dictionary<string, InventoryItemSelectableButtonEvent>();
 
-        private TextMeshPro? displayHeader;
-        private TextMeshPro? displayDesc;
+        private GameObject? currentPage;
+        private UIComboPrompt? comboPrompt;
+        private GameObject? thoughtsButton;
 
-        private SpriteRenderer? displayIcon;
+        private bool hornetMode = false; //For toggling Hornet's thoughts
 
         public void SetPageTo(string key)
         {
@@ -30,111 +34,209 @@ namespace VesselMayCrySE.UIHandler
 
             if (page == null) { return; }
             if (pageRoot == null) { return; }
-            pageRoot.SetActiveChildren(false);
+            scrollRoot.SetActiveChildren(false);
+            scrollRoot.SetActive(true);
             page.SetActive(true);
+            currentPage = page;
+
+            hornetMode = false;
 
             if (defaultButtons.ContainsKey(key))
             {
-                gameObject.transform.parent.GetComponent<InventoryItemToolManager>().SetSelected(defaultButtons[key], null, false);
+                InventoryItemSelectableButtonEvent defaultbutton = defaultButtons[key];
+                SetDefaultButton(defaultbutton);
             }
 
+            grid.Start();
         }
 
         public override void CreateMenuOptions()
         {
+            base.CreateMenuOptions();
+
             if (pageRoot == null) { return; }
             pageRoot.name = "Devil Skill Page";
 
-            Dictionary<string, string[]> keypairs = new Dictionary<string, string[]>()
-            {
-                ["DEVILSWORD"] = ["DEVILSWORD_MASTERY", "DEVILSWORD_COMBO", "DEVILSWORD_DOWNSLASH", "DEVILSWORD_DRIVE", "DEVILSWORD_HIGHTIME", "DEVILSWORD_MILLIONSTAB", "DEVILSWORD_REACTOR", "DEVILSWORD_ROUNDTRIP", "DEVILSWORD_FORMATION"]
-            };
+            SetScrollDetails(-10.7f, -2);
 
-            foreach (string key in keypairs.Keys)
+            foreach (string key in DevilSkillPage.SkillPages.Keys)
             {
-                string[] vals = keypairs[key];
+                DevilSkillPage.SkillPageData pageData = DevilSkillPage.SkillPages[key];
+                List<string> skillNames = new List<string>();
 
-                GameObject baselist = CreateBaseList(key, vals);
+                foreach (DevilSkillPage.SkillData skill in pageData.skills)
+                {
+                    skillNames.Add(skill.key);
+                }
+
+                GameObject baselist = CreateBaseList(pageData.name, skillNames.ToArray());
                 baseLists.Add(baselist);
             }
 
-            CreatePanel();
+            ModifyIconSpacer();
+
+            CreateThoughtsButton();
+        }
+
+        private void CreateThoughtsButton()
+        {
+            //cancel button
+            InventoryItemToolManager manager = DevilMenuUI.inventoryItemToolManager;
+            if (manager == null) { return; }
+            GameObject? cancelbutton = manager.gameObject.Child("Cancel Action");
+            if (cancelbutton == null) { return; }
+            thoughtsButton = GameObject.Instantiate(cancelbutton);
+            thoughtsButton.transform.parent = pageRoot.transform;
+            thoughtsButton.transform.localPosition = new Vector3(-0.05f, -4.6f, 0f);
+            thoughtsButton.GetComponentInChildren<MenuButtonIcon>().menuAction = Platform.MenuActions.Submit;
+            thoughtsButton.GetComponentInChildren<MenuButtonIcon>().RefreshButtonIcon();
+            thoughtsButton.SetActive(true);
+            
+            foreach (TextMeshPro text in thoughtsButton.GetComponentsInChildren<TextMeshPro>())
+            {
+                text.color = new Color(1, 1, 1, 1);
+            }
+
+            thoughtsButton.GetComponentInChildren<SetTextMeshProGameText>().text = new LocalisedString($"Mods.{VesselMayCrySEPlugin.Id}", "THOUGHTS_BUTTON");
+            UpdateThoughtsButton();
+        }
+
+        private void UpdateThoughtsButton()
+        {
+            if (thoughtsButton == null) { return; }
+            foreach (TextMeshPro text in thoughtsButton.GetComponentsInChildren<TextMeshPro>())
+            {
+                text.color = new Color(1, 1, 1, 1);
+            }
+            thoughtsButton.GetComponentInChildren<SetTextMeshProGameText>().text = new LocalisedString($"Mods.{VesselMayCrySEPlugin.Id}", "THOUGHTS");
+            if (hornetMode)
+            {
+                thoughtsButton.GetComponentInChildren<SetTextMeshProGameText>().text = new LocalisedString($"Mods.{VesselMayCrySEPlugin.Id}", "DESCRIPTION");
+            }
+            thoughtsButton.GetComponentInChildren<SetTextMeshProGameText>().UpdateText();
+        }
+
+        private void ModifyIconSpacer()
+        {
+            if (panel == null) { return; }
+            GameObject? spacer = panel.ChildChain("Layout Stack", "Icon Spacer");
+
+            if (spacer == null) { return; }
+
+            spacer.Child("Tool Icon").SetActive(false);
+
+            GameObject? button = DevilMenuUI.CreateComboButtonPrompt();
+            if (button == null) { return; }
+            button.transform.parent = spacer.transform;
+            button.transform.localPosition = new Vector3(0, -1.5f, 0);
+            button.SetActive(true);
+            comboPrompt = button.AddComponent<UIComboPrompt>();
         }
 
         private GameObject CreateBaseList(string name, string[] moves)
         {
             GameObject root = new GameObject(name);
-            root.transform.parent = pageRoot.transform;
+            root.transform.parent = scrollRoot.transform;
 
-            Vector3 origPos = new Vector3(-12.5f, 4.2f, -30);
-            Vector3 addon = new Vector3(0, -2, 0);
+            Vector3 origPos = new Vector3(-10.7f, 0, -30);
+
+            int count = 0;
 
             foreach (string move in moves)
             {
-                InventoryItemSelectableButtonEvent? button = DevilMenuUI.CreateTextButton(move, move+"_NAME", origPos, root);
+                count++;
+                InventoryItemSelectableButtonEvent? button = DevilMenuUI.CreateTextButton(move, move + "_NAME", origPos, root);
                 button.OnSelected += SetPanelName;
-                origPos += addon;
+                button.ButtonActivated += ToggleThoughts;
 
                 //default
                 if (move == moves[0])
                 {
                     SetDefaultButton(button);
-                    defaultButtons.Add(name,button);
+                    defaultButtons.Add(name, button);
                 }
             }
+
+            InventoryItemSelectableButtonEvent? backButton = DevilMenuUI.CreateTextButton("BACK", "BACK", origPos, root);
+            backButton.ButtonActivated += ReturnToPreviousPage;
+            backButton.OnSelected += SetNoName;
 
             return root;
         }
 
-        private void CreatePanel()
+        private void SetNoName(InventoryItemSelectable selectable)
         {
-            if (pageRoot == null) { return; }
-            GameObject? thingToClone = pageRoot.transform.parent.transform.parent.gameObject.ChildChain("Tool Group", "Tool Description Panel");
-            //WOW THAT ONE HURT TO TYPE
-            if (thingToClone == null) { return; }
+            SetNameAndDesc("BACK", "BLANK");
+            if (comboPrompt != null)
+            {
+                comboPrompt.gameObject.SetActiveChildren(false);
+            }
+        }
 
-            GameObject infoPanel = GameObject.Instantiate(thingToClone);
-            infoPanel.name = "Weapon Info Panel";
-            infoPanel.transform.parent = pageRoot.transform;
-            infoPanel.transform.localPosition = new Vector3(-3.3f, 7.1f, 0);
+        private void ToggleThoughts()
+        {
+            if (currentPage == null) { return; }
+            if (thoughtsButton == null) { return; }
+            GameObject currentButton = DevilMenuUI.inventoryItemToolManager.CurrentSelected.gameObject;
+            if (currentButton == null) { return; }
+            string movekey = currentButton.name;
+            string namekey = currentPage.gameObject.name;
 
-            infoPanel.SetActiveChildren(false);
+            hornetMode = !hornetMode;
 
-            GameObject? divider = infoPanel.Child("Divider");
-            GameObject? layoutStack = infoPanel.Child("Layout Stack");
-            if (divider == null || layoutStack == null) { return; }
+            UpdateThoughtsButton();
 
-            GameObject? textAmount = layoutStack.ChildChain("Icon Spacer", "Text Amount");
-            if (textAmount == null) { return; }
+            SetNameAndDesc(movekey + "_NAME", movekey + "_DESC");
+            if (hornetMode)
+            {
+                SetNameAndDesc(movekey + "_NAME", movekey + "_HORNET");
+            }
+        }
 
-            textAmount.SetActive(false);
-
-            layoutStack.SetActive(true);
-            divider.SetActive(true);
-
-            displayHeader = layoutStack.Child("Text Name").gameObject.GetComponent<TextMeshPro>();
-            displayDesc = layoutStack.Child("Text Desc").gameObject.GetComponent<TextMeshPro>();
-
-            GameObject? toolIcon = layoutStack.ChildChain("Icon Spacer", "Tool Icon");
-            displayIcon = toolIcon.GetComponent<SpriteRenderer>();
+        private void ReturnToPreviousPage()
+        {
+            DevilMenuUI.TraverseToPage(DevilMenuUI.skillListUI);
         }
 
         private void SetPanelName(InventoryItemSelectable selectable)
         {
-            string key = selectable.gameObject.name;
-            SetNameAndDesc(key + "_NAME", key + "_DESC");
-        }
+            if (currentPage == null) { return; }
+            string movekey = selectable.gameObject.name;
+            string namekey = currentPage.gameObject.name;
 
-        private void SetNameAndDesc(string name, string desc)
-        {
-            if (displayHeader == null || displayDesc == null) { return; }
-            displayHeader.text = new LocalisedString($"Mods.{VesselMayCrySEPlugin.Id}", name);
-            displayDesc.text = new LocalisedString($"Mods.{VesselMayCrySEPlugin.Id}", desc);
-        }
+            DevilSkillPage.SkillData skillData = DevilSkillPage.SkillPages[namekey].skills.Find(s => s.key == movekey);
+            if (skillData == null) { return; }
 
+            if (comboPrompt != null)
+            {
+                hornetMode = false;
+                UpdateThoughtsButton();
+
+                comboPrompt.SetToSkill(skillData);
+            }
+
+            SetNameAndDesc(movekey + "_NAME", movekey + "_DESC");
+
+            //Hotfix for desc size
+            if (panel == null) { return; }
+            GameObject? desc = panel.ChildChain("Layout Stack", "Text Desc");
+            if (desc != null)
+            {
+                desc.GetComponent<RectTransform>().sizeDelta = new Vector2(7, 9);
+            }
+        }
         public override void OnMenuOpened()
         {
-            throw new NotImplementedException();
+            if (currentPage == null) { return; }
+            if (defaultButtons.ContainsKey(currentPage.name))
+            {
+                gameObject.transform.parent.GetComponent<InventoryItemToolManager>().SetSelected(defaultButtons[currentPage.name], null, false);
+            }
+
+            if (panel == null) { return; }
+            panel.SetActive(true);
+
+            scrollRoot.SetActive(true);
         }
     }
 }
