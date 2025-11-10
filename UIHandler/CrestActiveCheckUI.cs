@@ -11,9 +11,10 @@ namespace VesselMayCrySE.UIHandler
         private InventoryItemToolManager? manager;
         private void Awake()
         {
-            manager = DevilMenuUI.inventoryItemToolManager;
+            if (DevilMenuUI.Instance == null) { return; }
+            manager = DevilMenuUI.Instance.inventoryItemToolManager;
             if (manager == null) { return; }
-            inventoryToolCrestList = DevilMenuUI.inventoryItemToolManager.crestList;
+            inventoryToolCrestList = DevilMenuUI.Instance.inventoryItemToolManager.crestList;
         }
 
         private void Update()

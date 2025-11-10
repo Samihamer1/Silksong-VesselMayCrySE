@@ -14,6 +14,7 @@ namespace VesselMayCrySE.UIHandler
 
         public override void CreateMenuOptions()
         {
+            if (DevilMenuUI.Instance == null) { return; }
             base.CreateMenuOptions();
             if (pageRoot == null) { return; }
             pageRoot.name = "Devil Skill List";
@@ -33,7 +34,7 @@ namespace VesselMayCrySE.UIHandler
 
             foreach (string weapon in nameKeys)
             {
-                InventoryItemSelectableButtonEvent? button = DevilMenuUI.CreateTextButton(weapon, weapon+"_NAME", origPos, scrollRoot);
+                InventoryItemSelectableButtonEvent? button = DevilMenuUI.Instance.CreateTextButton(weapon, weapon+"_NAME", origPos, scrollRoot);
                 buttons.Add(button);
                 button.OnSelected += SetPanelName;
                 button.ButtonActivated += SetSkillInfo;
@@ -42,7 +43,7 @@ namespace VesselMayCrySE.UIHandler
             SetDefaultButton(buttons[0]);
 
 
-            InventoryItemSelectableButtonEvent? backButton = DevilMenuUI.CreateTextButton("Back", "BACK", origPos, scrollRoot);
+            InventoryItemSelectableButtonEvent? backButton = DevilMenuUI.Instance.CreateTextButton("Back", "BACK", origPos, scrollRoot);
             backButton.ButtonActivated += ReturnToPreviousPage;
             backButton.OnSelected += SetNoName;
 
@@ -55,6 +56,8 @@ namespace VesselMayCrySE.UIHandler
 
         private void SetSkillInfo()
         {
+            if (DevilMenuUI.Instance == null) { return; }
+
             InventoryItemToolManager manager = gameObject.transform.parent.GetComponent<InventoryItemToolManager>();
             if (manager == null) { return; }
 
@@ -63,10 +66,10 @@ namespace VesselMayCrySE.UIHandler
 
             string key = current.name;
 
-            if (DevilMenuUI.skillPageUI == null) { return; }
+            if (DevilMenuUI.Instance.skillPageUI == null) { return; }
 
-            DevilMenuUI.skillPageUI.SetPageTo(key);
-            DevilMenuUI.TraverseToPage(DevilMenuUI.skillPageUI);
+            DevilMenuUI.Instance.skillPageUI.SetPageTo(key);
+            DevilMenuUI.Instance.TraverseToPage(DevilMenuUI.Instance.skillPageUI);
             
         }
 
@@ -78,7 +81,8 @@ namespace VesselMayCrySE.UIHandler
 
         private void ReturnToPreviousPage()
         {
-            DevilMenuUI.TraverseToPage(DevilMenuUI.menuOptionsUI);
+            if (DevilMenuUI.Instance == null) { return; }
+            DevilMenuUI.Instance.TraverseToPage(DevilMenuUI.Instance.menuOptionsUI);
         }
 
         public override void OnMenuOpened()

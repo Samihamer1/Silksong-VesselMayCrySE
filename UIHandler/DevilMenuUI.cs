@@ -1,4 +1,5 @@
 ﻿using GlobalEnums;
+using HutongGames.PlayMaker;
 using Mono.WebBrowser;
 using Silksong.FsmUtil;
 using System;
@@ -11,101 +12,152 @@ using UnityEngine;
 
 namespace VesselMayCrySE.UIHandler
 {
-    internal static class DevilMenuUI
+    /// <summary>
+    /// Intended to be added to the InventoryItemSelectableButtonEvent button within 'Change Crest Action' to create the Devil Menu UI.
+    /// </summary>
+    internal class DevilMenuUI : MonoBehaviour
     {
-        public static GameObject? menuRoot;
-        public static GameObject? buttonPrefab;
-        private static GameObject? changeCrestPrompt;
+        public static DevilMenuUI? Instance;
 
-        private static InventoryItemSelectableButtonEvent? activationButton;
-        private static GameObject? cancelButton;
+        //Misc references
+        public InventoryItemToolManager inventoryItemToolManager;
 
-        public static InventoryItemToolManager inventoryItemToolManager;
-        public static DevilSkillListUI? skillListUI;
-        public static DevilMenuOptionsUI? menuOptionsUI;
-        public static DevilSkillPageUI? skillPageUI;
-        public static DevilDifficultyUI? difficultyUI;
+        //Gameobject references
+        public GameObject menuRoot;
+        public GameObject buttonPrefab;
+        private GameObject? changeCrestPrompt;
+        private GameObject ToolsPane;
+        private GameObject? cancelButtonPrefab;
+        private GameObject? cancelButton;
 
-        public static void CreateMenu(InventoryItemSelectableButtonEvent button)
+        //Button references
+        private InventoryItemSelectableButtonEvent changeCrestAction;
+        private InventoryItemSelectableButtonEvent activationButton;
+
+        //Menu page references
+        public DevilSkillListUI skillListUI;
+        public DevilMenuOptionsUI menuOptionsUI;
+        public DevilSkillPageUI skillPageUI;
+        public DevilDifficultyUI difficultyUI;
+
+        private void Awake()
         {
-            buttonPrefab = button.gameObject;
-            GameObject tools = button.transform.parent.transform.parent.gameObject;
-
-            GameObject buttonParent = new GameObject("Devil Crest Button Parent");
-            buttonParent.transform.parent = button.transform.parent;
-            buttonParent.transform.localPosition = Vector3.zero;
-
-            GameObject clone = GameObject.Instantiate(button.gameObject);
-            clone.name = "Devil Crest Action";
-            clone.transform.parent = buttonParent.transform;
-            clone.transform.localPosition = new Vector3(6.515f, 0,0);
-
-
-            //Creating the activation button
-            activationButton = clone.GetComponent<InventoryItemSelectableButtonEvent>();
-            button.Selectables[(int)InventoryItemManager.SelectionDirection.Right] = activationButton; //Allowing it to be reached
-
-            activationButton.GetComponentInChildren<SetTextMeshProGameText>().text = new LocalisedString($"Mods.{VesselMayCrySEPlugin.Id}", "DEVIL_CREST_BUTTON");
-            activationButton.GetComponentInChildren<SetTextMeshProGameText>().UpdateText();
-
-            MenuButtonIcon icon = clone.GetComponentInChildren<MenuButtonIcon>();
-            if (icon == null) { return; }
-
-            icon.menuAction = Platform.MenuActions.Extra;
-            icon.RefreshButtonIcon();
-                
-            //Allowing dash to activate the menu
-            PlayMakerFSM proxyfsm = tools.LocateMyFSM("Inventory Proxy");
-            proxyfsm.GetState("EXTRA").InsertMethod(0, _ =>
+            if (Instance != null)
             {
-                if (menuRoot == null) { return; }
-                SetToggleDevilMenu(!menuRoot.activeSelf);
-            });
+                Destroy(this);
+                return;
+            }
+            Instance = this;
+
+            //Getting references
+            changeCrestAction = gameObject.GetComponent<InventoryItemSelectableButtonEvent>();
+            buttonPrefab = gameObject;
+            ToolsPane = transform.parent.transform.parent.gameObject; //Tools inventory pane
+            inventoryItemToolManager = ToolsPane.GetComponent<InventoryItemToolManager>();
+            changeCrestPrompt = ToolsPane.Child("Change Crest Prompt");
+            cancelButtonPrefab = ToolsPane.Child("Cancel Action");
 
 
             //Creating menu
-            InventoryItemToolManager manager = tools.GetComponent<InventoryItemToolManager>();
-            inventoryItemToolManager = manager;
             menuRoot = new GameObject("Devil Menu");
-            menuRoot.transform.parent = tools.transform;
+            menuRoot.transform.parent = ToolsPane.transform;
             menuRoot.SetActive(false);
 
-            changeCrestPrompt = manager.gameObject.Child("Change Crest Prompt");
-
+            //Creating the menu pages
             skillPageUI = menuRoot.AddComponent<DevilSkillPageUI>();
             skillListUI = menuRoot.AddComponent<DevilSkillListUI>();
             difficultyUI = menuRoot.AddComponent<DevilDifficultyUI>();
 
             menuOptionsUI = menuRoot.AddComponent<DevilMenuOptionsUI>(); //Must be last
 
+            //Creating cancel button
+            cancelButton = CreateMenuButtonPrompt(ToolsPane, Platform.MenuActions.Extra);
+            if (cancelButton != null)
+            {
+                cancelButton.transform.localPosition = new Vector3(4f, -12.9f, -30f);
+            }
 
+
+            //Final touches
+            CreateActivationButton();
+            PatchMenuOpening(); //Allowing the menu to be activated
+        }
+
+        /// <summary>
+        /// Patches the 'Inventory Proxy' fsm to allow opening and closing of the devil menu, and resetting of the menu when the InventoryPane is opened.
+        /// </summary>
+        private void PatchMenuOpening()
+        {
+            if (ToolsPane == null) { return; }
+
+            PlayMakerFSM? proxyfsm = ToolsPane.LocateMyFSM("Inventory Proxy");
+            if (proxyfsm == null) { return; }
+
+            FsmState? extraState = proxyfsm.GetState("EXTRA");
+            if (extraState == null) { return; }
+
+            extraState.InsertMethod(0, _ => { ToggleDevilMenu(); });
 
             InventoryPane pane = proxyfsm.gameObject.GetComponent<InventoryPane>();
             pane.OnPaneStart += ResetDevilMenu;
+        }
 
-            void TestActivate()
-            {
-                if (menuRoot == null) { return; }
-                SetToggleDevilMenu(!menuRoot.activeSelf);
-            }
+        /// <summary>
+        /// Creates the activation button for the devil menu.
+        /// </summary>
+        private void CreateActivationButton()
+        {
+            InventoryItemSelectableButtonEvent prefab = changeCrestAction;
+            if (prefab == null) { VesselMayCrySEPlugin.Instance.LogError("Change Crest Action prefab not found when creating Activation Button"); return; }
 
-            activationButton.ButtonActivated += TestActivate;
+            GameObject? parent = changeCrestPrompt;
+            if (parent == null) { VesselMayCrySEPlugin.Instance.LogError("Change Crest Prompt not found when creating Activation Button"); return; }
 
-            //cancel button
-            cancelButton = manager.gameObject.Child("Cancel Action");
-            if (cancelButton == null) { return; }
-            cancelButton = GameObject.Instantiate(cancelButton);
-            cancelButton.transform.parent = manager.gameObject.transform;
-            cancelButton.transform.localPosition = new Vector3(4f, -12.9f, -30f);
-            cancelButton.GetComponentInChildren<MenuButtonIcon>().menuAction = Platform.MenuActions.Extra;
-            cancelButton.GetComponentInChildren<MenuButtonIcon>().RefreshButtonIcon();
+            GameObject buttonParent = new GameObject("Devil Crest Button Parent"); //To hold the activation button within it
+            buttonParent.transform.parent = parent.transform;
+            buttonParent.transform.localPosition = Vector3.zero;
 
+            GameObject clone = GameObject.Instantiate(prefab.gameObject);
+            clone.name = "Devil Crest Action";
+            clone.transform.parent = buttonParent.transform;
+            clone.transform.localPosition = new Vector3(6.515f, 0, 0);
+
+
+            //Creating the activation button
+            activationButton = clone.GetComponent<InventoryItemSelectableButtonEvent>();
+
+            //Setting text
+            activationButton.GetComponentInChildren<SetTextMeshProGameText>().text = new LocalisedString($"Mods.{VesselMayCrySEPlugin.Id}", "DEVIL_CREST_BUTTON");
+            activationButton.GetComponentInChildren<SetTextMeshProGameText>().UpdateText();
+
+            //Setting keybind icon
+            MenuButtonIcon icon = clone.GetComponentInChildren<MenuButtonIcon>();
+            if (icon == null) { return; }
+
+            icon.menuAction = Platform.MenuActions.Extra;
+            icon.RefreshButtonIcon();
 
             //button parent component so that the activation button is only visible when devil crest is active
             buttonParent.AddComponent<CrestActiveCheckUI>();
+
+            //Allowing activation of menu
+            activationButton.ButtonActivated += ToggleDevilMenu;
         }
 
-        public static void TraverseToPage(DevilMenuPage? page)
+        /// <summary>
+        /// Toggles the devil menu open or closed.
+        /// </summary>
+        private void ToggleDevilMenu()
+        {
+            if (menuRoot == null) { return; }
+            SetStateDevilMenu(!menuRoot.activeSelf);
+        }
+
+        /// <summary>
+        /// Traverses the menu to a given page
+        /// </summary>
+        /// <param name="page">Page to traverse to, may be null</param>
+        public void TraverseToPage(DevilMenuPage? page)
         {
             if (page == null) { return; }
             DeactivateAllMenus();
@@ -113,20 +165,31 @@ namespace VesselMayCrySE.UIHandler
             page.OpenMenu();
         }
 
-        private static void DeactivateAllMenus()
+        /// <summary>
+        /// Deactivates all devil menu pages, as well as all children of the menu root.
+        /// </summary>
+        private void DeactivateAllMenus()
         {
             if (menuRoot == null) { return; }
             menuRoot.SetActiveChildren(false);
         }
 
-        public static void ReturnToMenu()
+        /// <summary>
+        /// Returns to the main menu page.
+        /// </summary>
+        public void ReturnToMenu()
         {
             DeactivateAllMenus();
 
             TraverseToPage(menuOptionsUI);
         }
 
-        public static void AddButtonToDefault(InventoryItemSelectable button)
+        /// <summary>
+        /// Adds a button to the default selectable buttons of the inventory tool manager.
+        /// Used to allow auto navigation to work correctly.
+        /// </summary>
+        /// <param name="button">The button to add</param>
+        public void AddButtonToDefault(InventoryItemSelectable button)
         {
             if (inventoryItemToolManager == null) { return; }
             List<InventoryItemSelectable> defaultList = inventoryItemToolManager.defaultSelectables.ToList();
@@ -136,12 +199,19 @@ namespace VesselMayCrySE.UIHandler
             inventoryItemToolManager.defaultSelectables = defaultList.ToArray();
         }
 
-        public static void ResetDevilMenu()
+        /// <summary>
+        /// Closes the devil menu.
+        /// </summary>
+        public void ResetDevilMenu()
         {
-            SetToggleDevilMenu(false);
+            SetStateDevilMenu(false);
         }
 
-        private static void SetToggleDevilMenu(bool state)
+        /// <summary>
+        /// Sets the state of the devil menu.
+        /// </summary>
+        /// <param name="state">true: open, false: closed</param>
+        private void SetStateDevilMenu(bool state)
         {
             if (menuRoot == null) { return; }
             if (activationButton == null) { return; }
@@ -172,7 +242,14 @@ namespace VesselMayCrySE.UIHandler
             }
         }
 
-        public static InventoryItemSelectableButtonEvent? CreateButton(string name, Vector3 localPosition, GameObject? root)
+        /// <summary>
+        /// Creates a button with an icon and small font.
+        /// </summary>
+        /// <param name="name">Name of gameobject</param>
+        /// <param name="localPosition">Position of gameobject</param>
+        /// <param name="root">Parent of gameobject</param>
+        /// <returns></returns>
+        public InventoryItemSelectableButtonEvent? CreateButton(string name, Vector3 localPosition, GameObject? root)
         {
             if (root == null) { return null; }
             if (buttonPrefab == null) { return null; }
@@ -188,7 +265,15 @@ namespace VesselMayCrySE.UIHandler
             return button1.GetComponentInChildren<InventoryItemSelectableButtonEvent>();
         }
 
-        public static InventoryItemSelectableButtonEvent? CreateTextButton(string name, string key, Vector3 localPosition, GameObject? root)
+        /// <summary>
+        /// Creates a button with large text and an icon.
+        /// </summary>
+        /// <param name="name">Name of gameobjectf</param>
+        /// <param name="key">Language key of text</param>
+        /// <param name="localPosition">Position of gameobject</param>
+        /// <param name="root">Parent of gameobject</param>
+        /// <returns></returns>
+        public InventoryItemSelectableButtonEvent? CreateTextButton(string name, string key, Vector3 localPosition, GameObject? root)
         {
             InventoryItemSelectableButtonEvent? button = CreateButton(name, localPosition, root);
             if (button == null) { return null; }
@@ -212,6 +297,10 @@ namespace VesselMayCrySE.UIHandler
             return button;
         }
 
+        /// <summary>
+        /// Creates a combo button prompt for showing gameplay keybind prompts.  
+        /// </summary>
+        /// <returns>Created gameobject</returns>
         public static GameObject? CreateComboButtonPrompt()
         {
             if (GameCameras.instance == null) { return null; }
@@ -223,32 +312,26 @@ namespace VesselMayCrySE.UIHandler
             return clone;
         }
 
-        public static GameObject? CreateActionButton(HeroActionButton action)
+        /// <summary>
+        /// Creates a menu button prompt, which is a keybind next to text.
+        /// </summary>
+        /// <param name="parent">Parent object</param>
+        /// <param name="action">Action to display</param>
+        /// <returns>Created gameobject</returns>
+        public GameObject? CreateMenuButtonPrompt(GameObject parent, Platform.MenuActions action)
         {
-            if (menuRoot == null) { return null; }
-            GameObject manager = menuRoot.transform.parent.gameObject;
+            if (cancelButtonPrefab == null) { return null; }
+            GameObject cloneButton = GameObject.Instantiate(cancelButtonPrefab);
+            cloneButton.transform.parent = inventoryItemToolManager.gameObject.transform;
 
-            GameObject? button = manager.Child("Cancel Action");
-            if (button == null) { return null; }
-            button = GameObject.Instantiate(button);
-            button.transform.localScale = new Vector3(1, 1, 1);
-            GameObject.Destroy(button.GetComponentInChildren<MenuButtonIcon>());
+            MenuButtonIcon icon = cloneButton.GetComponentInChildren<MenuButtonIcon>();
+            if (icon == null) { VesselMayCrySEPlugin.Instance.LogError($"MenuButtonIcon not found when calling CreateButtonPrompt({parent.name},{action.ToString()})"); return cloneButton; }
 
-            ActionButtonIcon actionButton = button.AddComponent<ActionButtonIcon>();
-            actionButton.label = button.GetComponentInChildren<TextMeshPro>();
-            actionButton.textContainer = button.GetComponentInChildren<TextContainer>();
-            actionButton.initialAutoSize = false;
-            actionButton.initialScale = new Vector3(1, 1, 1);
-            actionButton.liveUpdate = true;
+            icon.menuAction = Platform.MenuActions.Extra;
+            icon.RefreshButtonIcon();
 
-            actionButton.action = action;
-            actionButton.RefreshButtonIcon();
-
-            actionButton.label.color = new Color(1, 1, 1, 1);
-            button.Child("ActionButtonIcon").transform.localPosition = new Vector3(0,0, 0);
-            button.Child("ActionButtonIcon").transform.localScale = new Vector3(1, 1, 1);
-
-            return button;
+            return cloneButton;
         }
+
     }
 }

@@ -1,0 +1,111 @@
+{
+  "frames": {
+    "Test/RevolverEffect/2.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 347,
+        "h": 171
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 71,
+        "y": 249,
+        "w": 347,
+        "h": 171
+      },
+      "sourceSize": {
+        "w": 445,
+        "h": 430
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Test/RevolverEffect/4.png": {
+      "frame": {
+        "x": 347,
+        "y": 0,
+        "w": 344,
+        "h": 203
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 46,
+        "y": 24,
+        "w": 344,
+        "h": 203
+      },
+      "sourceSize": {
+        "w": 445,
+        "h": 430
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Test/RevolverEffect/1.png": {
+      "frame": {
+        "x": 0,
+        "y": 171,
+        "w": 215,
+        "h": 343
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 212,
+        "y": 32,
+        "w": 215,
+        "h": 343
+      },
+      "sourceSize": {
+        "w": 445,
+        "h": 430
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "Test/RevolverEffect/3.png": {
+      "frame": {
+        "x": 691,
+        "y": 0,
+        "w": 202,
+        "h": 330
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 46,
+        "w": 202,
+        "h": 330
+      },
+      "sourceSize": {
+        "w": 445,
+        "h": 430
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "testatlas.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 893,
+      "h": 514
+    },
+    "scale": 1
+  }
+}

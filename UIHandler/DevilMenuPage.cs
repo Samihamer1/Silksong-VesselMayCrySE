@@ -30,18 +30,21 @@ namespace VesselMayCrySE.UIHandler
         /// <param name="button"></param>
         public void SetDefaultButton(InventoryItemSelectableButtonEvent button)
         {
+            if (DevilMenuUI.Instance == null) { return; }
+
             defaultButton = button;
 
-            DevilMenuUI.AddButtonToDefault(defaultButton);
+            DevilMenuUI.Instance.AddButtonToDefault(defaultButton);
         }
 
         private void Awake()
         {
-            if (DevilMenuUI.buttonPrefab == null) { return; }
-            if (DevilMenuUI.menuRoot == null) { return; }
+            if (DevilMenuUI.Instance== null) { return; }
+            if (DevilMenuUI.Instance.buttonPrefab == null) { return; }
+            if (DevilMenuUI.Instance.menuRoot == null) { return; }
 
             pageRoot = new GameObject("Devil Menu Page");
-            pageRoot.transform.parent = DevilMenuUI.menuRoot.transform;
+            pageRoot.transform.parent = DevilMenuUI.Instance.menuRoot.transform;
             pageRoot.transform.localPosition = Vector3.zero;
             pageRoot.SetActive(false);
 

@@ -81,14 +81,16 @@ namespace VesselMayCrySE.Weapons
                 //Just know that if you use SendEvent like a normal person, it doesn't recognise the global transition.
                 //But only the SECOND time the game loads.
                 spellfsm.ChangeState(spell.GetGlobalEvent());
-            }
 
 
-            //Taking silk if not in easy mode
-            if (handler.GetCurrentDifficulty() != Difficulties.DevilDifficulty.EASY)
-            {
-                HeroController.instance.TakeSilk(1);
+
+                //Taking silk if not in easy mode
+                if (handler.GetCurrentDifficulty() != Difficulties.DevilDifficulty.EASY)
+                {
+                    HeroController.instance.TakeSilk(1);
+                }
             }
+
         }
 
         public void UpSpell()

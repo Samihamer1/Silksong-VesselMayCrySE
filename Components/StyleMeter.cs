@@ -173,6 +173,8 @@ namespace VesselMayCrySE.Components
                 meter = metermax * 0.3f;
             }
 
+            rankDecayTime = 0;
+
             //reset stored attack list
             recentlyHitAttacks.Clear();
         }

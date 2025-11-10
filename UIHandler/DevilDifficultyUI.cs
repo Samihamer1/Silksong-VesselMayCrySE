@@ -16,6 +16,8 @@ namespace VesselMayCrySE.UIHandler
         private GameObject? selectButton;
         public override void CreateMenuOptions()
         {
+            if (DevilMenuUI.Instance == null) { return; }   
+
             base.CreateMenuOptions();
 
             if (pageRoot == null) { return; }
@@ -31,7 +33,7 @@ namespace VesselMayCrySE.UIHandler
             foreach (string difficulty in difficulties)
             {
 
-                InventoryItemSelectableButtonEvent? button = DevilMenuUI.CreateTextButton(difficulty, difficulty, origPos, scrollRoot);
+                InventoryItemSelectableButtonEvent? button = DevilMenuUI.Instance.CreateTextButton(difficulty, difficulty, origPos, scrollRoot);
                 button.ButtonActivated += SelectDifficulty;
                 button.OnSelected += SetPanelName;
 
@@ -41,7 +43,7 @@ namespace VesselMayCrySE.UIHandler
                 }
             }
 
-            InventoryItemSelectableButtonEvent? backButton = DevilMenuUI.CreateTextButton("Back", "BACK", origPos, scrollRoot);
+            InventoryItemSelectableButtonEvent? backButton = DevilMenuUI.Instance.CreateTextButton("Back", "BACK", origPos, scrollRoot);
             backButton.ButtonActivated += ReturnToPreviousPage;
             backButton.OnSelected += SetNoName;
 
@@ -57,7 +59,8 @@ namespace VesselMayCrySE.UIHandler
 
         private void ReturnToPreviousPage()
         {
-            DevilMenuUI.TraverseToPage(DevilMenuUI.menuOptionsUI);
+            if (DevilMenuUI.Instance == null) { return; }
+            DevilMenuUI.Instance.TraverseToPage(DevilMenuUI.Instance.menuOptionsUI);
         }
 
         private void SetPanelName(InventoryItemSelectable selectable)
@@ -79,8 +82,10 @@ namespace VesselMayCrySE.UIHandler
 
         private void CreateSelectButton()
         {
+            if (DevilMenuUI.Instance == null) { return; }
+
             //cancel button
-            InventoryItemToolManager manager = DevilMenuUI.inventoryItemToolManager;
+            InventoryItemToolManager manager = DevilMenuUI.Instance.inventoryItemToolManager;
             if (manager == null) { return; }
             GameObject? cancelbutton = manager.gameObject.Child("Cancel Action");
             if (cancelbutton == null) { return; }
@@ -115,8 +120,9 @@ namespace VesselMayCrySE.UIHandler
         private void SelectDifficulty()
         {
             if (DevilCrestHandler.Instance== null) { return; }
+            if (DevilMenuUI.Instance == null) { return; }
 
-            GameObject currentButton = DevilMenuUI.inventoryItemToolManager.CurrentSelected.gameObject;
+            GameObject currentButton = DevilMenuUI.Instance.inventoryItemToolManager.CurrentSelected.gameObject;
 
             string difficultyName = currentButton.name;
 
@@ -124,7 +130,7 @@ namespace VesselMayCrySE.UIHandler
 
             DevilCrestHandler.Instance.ChangeDifficulty(newDifficulty);
 
-            SetPanelName(DevilMenuUI.inventoryItemToolManager.CurrentSelected);
+            SetPanelName(DevilMenuUI.Instance.inventoryItemToolManager.CurrentSelected);
         }
 
         public override void OnMenuOpened()

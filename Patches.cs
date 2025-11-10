@@ -92,15 +92,18 @@ public static class Patches
 
     //Patching TakeDamage to know when player was hit
     [HarmonyPatch(typeof(HeroController), nameof(HeroController.instance.TakeDamage), typeof(GameObject), typeof(GlobalEnums.CollisionSide), typeof(int), typeof(GlobalEnums.HazardType), typeof(GlobalEnums.DamagePropertyFlags))]
-    [HarmonyPostfix]
-    private static void SendGotHitToManager()
+    [HarmonyPrefix]
+    private static void SendGotHitToManager(ref int damageAmount)
     {
         if (HeroController.instance == null) { return; }
+        if (!HeroController.instance.CanTakeDamage()) { return; }
 
         DevilCrestHandler handler = HeroController.instance.GetComponent<DevilCrestHandler>();
         if (handler == null) { return; }
+        
 
         handler.GotHit();
+        VesselMayCrySEPlugin.Instance.log(damageAmount.ToString());
     }
 
     //for the skill icons
@@ -121,7 +124,7 @@ public static class Patches
         {
             try
             {
-                DevilMenuUI.CreateMenu(button);
+                button.gameObject.AddComponent<DevilMenuUI>();
             }
             catch (Exception ex)
             {

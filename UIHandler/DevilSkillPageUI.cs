@@ -80,8 +80,10 @@ namespace VesselMayCrySE.UIHandler
 
         private void CreateThoughtsButton()
         {
+            if (DevilMenuUI.Instance == null) { return; }
+
             //cancel button
-            InventoryItemToolManager manager = DevilMenuUI.inventoryItemToolManager;
+            InventoryItemToolManager manager = DevilMenuUI.Instance.inventoryItemToolManager;
             if (manager == null) { return; }
             GameObject? cancelbutton = manager.gameObject.Child("Cancel Action");
             if (cancelbutton == null) { return; }
@@ -135,6 +137,8 @@ namespace VesselMayCrySE.UIHandler
 
         private GameObject CreateBaseList(string name, string[] moves)
         {
+            if (DevilMenuUI.Instance == null) { return null; }
+
             GameObject root = new GameObject(name);
             root.transform.parent = scrollRoot.transform;
 
@@ -145,7 +149,7 @@ namespace VesselMayCrySE.UIHandler
             foreach (string move in moves)
             {
                 count++;
-                InventoryItemSelectableButtonEvent? button = DevilMenuUI.CreateTextButton(move, move + "_NAME", origPos, root);
+                InventoryItemSelectableButtonEvent? button = DevilMenuUI.Instance.CreateTextButton(move, move + "_NAME", origPos, root);
                 button.OnSelected += SetPanelName;
                 button.ButtonActivated += ToggleThoughts;
 
@@ -157,7 +161,7 @@ namespace VesselMayCrySE.UIHandler
                 }
             }
 
-            InventoryItemSelectableButtonEvent? backButton = DevilMenuUI.CreateTextButton("BACK", "BACK", origPos, root);
+            InventoryItemSelectableButtonEvent? backButton = DevilMenuUI.Instance.CreateTextButton("BACK", "BACK", origPos, root);
             backButton.ButtonActivated += ReturnToPreviousPage;
             backButton.OnSelected += SetNoName;
 
@@ -175,9 +179,10 @@ namespace VesselMayCrySE.UIHandler
 
         private void ToggleThoughts()
         {
+            if (DevilMenuUI.Instance == null) { return; }
             if (currentPage == null) { return; }
             if (thoughtsButton == null) { return; }
-            GameObject currentButton = DevilMenuUI.inventoryItemToolManager.CurrentSelected.gameObject;
+            GameObject currentButton = DevilMenuUI.Instance.inventoryItemToolManager.CurrentSelected.gameObject;
             if (currentButton == null) { return; }
             string movekey = currentButton.name;
             string namekey = currentPage.gameObject.name;
@@ -195,7 +200,8 @@ namespace VesselMayCrySE.UIHandler
 
         private void ReturnToPreviousPage()
         {
-            DevilMenuUI.TraverseToPage(DevilMenuUI.skillListUI);
+            if (DevilMenuUI.Instance == null) { return; }
+            DevilMenuUI.Instance.TraverseToPage(DevilMenuUI.Instance.skillListUI);
         }
 
         private void SetPanelName(InventoryItemSelectable selectable)

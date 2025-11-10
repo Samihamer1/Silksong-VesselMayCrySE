@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UIElements;
+using static Mono.Security.X509.X520;
+using static tk2dSpriteAnimationClip;
 
 namespace VesselMayCrySE.AnimationHandler
 {
@@ -14,6 +17,7 @@ namespace VesselMayCrySE.AnimationHandler
         private static GameObject? VMCSEAnimationCollections;
         private static GameObject? DevilSwordAnimator;
         private static GameObject? KingCerberusAnimator;
+        private static GameObject? BalrogAnimator;
         
         //I know hard-coding png dimensions is a bad idea. I MIGHT fix it.
         //Just let me cook first, alright?
@@ -185,6 +189,14 @@ namespace VesselMayCrySE.AnimationHandler
             //IceAge
             CloneAnimationTo(KingCerberusAnimator, AnimationLibraryNames.DEFAULT, "AirSphere Attack", "Ice Age", 24);
             #endregion
+
+            #region Balrog animations
+
+            BalrogAnimator = CreateAnimationObject("Balrog Animations");
+
+            #endregion
+
+            AnimationLoader.Test();
         }
 
         internal static tk2dSpriteAnimation? GetDevilSwordAnimator()
@@ -201,10 +213,20 @@ namespace VesselMayCrySE.AnimationHandler
         {
             if (KingCerberusAnimator == null)
             {
-                VesselMayCrySEPlugin.Instance.LogError("Devilsword animator not found");
+                VesselMayCrySEPlugin.Instance.LogError("Cerberus animator not found");
                 return null;
             }
             return KingCerberusAnimator.GetComponent<tk2dSpriteAnimator>().library;
+        }
+
+        internal static tk2dSpriteAnimation? GetBalrogAnimator()
+        {
+            if (BalrogAnimator == null)
+            {
+                VesselMayCrySEPlugin.Instance.LogError("Balrog animator not found");
+                return null;
+            }
+            return BalrogAnimator.GetComponent<tk2dSpriteAnimator>().library;
         }
 
         private static void SetFrameToTrigger(GameObject animatorObject, string animationName, int frame) {
@@ -277,6 +299,44 @@ namespace VesselMayCrySE.AnimationHandler
             UnityEngine.GameObject.DontDestroyOnLoad(obj);
             UnityEngine.GameObject.DontDestroyOnLoad(animator);
             return obj;
+        }
+
+        public static void LoadAnimationTo(GameObject animator, tk2dSpriteCollectionData spriteCollectionData, string name, int fps, tk2dSpriteAnimationClip.WrapMode wrapmode, int length)
+        {
+            List<tk2dSpriteAnimationClip> list = animator.GetComponent<tk2dSpriteAnimator>().Library.clips.ToList<tk2dSpriteAnimationClip>();
+            spriteCollectionData.material.shader = HeroController.instance.GetComponent<MeshRenderer>().material.shader;
+
+            if (VMCSEAnimationCollections != null)
+            {
+                spriteCollectionData.gameObject.transform.parent = VMCSEAnimationCollections.transform;
+            }
+
+            tk2dSpriteAnimationFrame[] list1 = new tk2dSpriteAnimationFrame[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                tk2dSpriteAnimationFrame frame = new tk2dSpriteAnimationFrame();
+                frame.spriteCollection = spriteCollectionData;
+                frame.spriteId = i;
+
+
+                list1[i] = frame;
+            }
+
+            tk2dSpriteAnimationClip clip = new tk2dSpriteAnimationClip();
+            clip.name = name;
+            clip.fps = fps;
+            clip.frames = list1;
+            clip.wrapMode = wrapmode;
+
+
+            clip.SetCollection(spriteCollectionData);
+
+            list.Add(clip);
+            tk2dSpriteAnimation animation = animator.GetComponent<tk2dSpriteAnimator>().Library;
+            animation.clips = list.ToArray();
+            Helper.SetPrivateField<bool>(animation, "isValid", false); //to refresh the animation lookup
+            animation.ValidateLookup();
         }
 
         private static void LoadAnimationTo(GameObject animator, string path, string name, int fps, tk2dSpriteAnimationClip.WrapMode wrapmode, int length, int xbound, int ybound)

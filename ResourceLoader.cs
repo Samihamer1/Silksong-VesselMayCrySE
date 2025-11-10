@@ -1,10 +1,12 @@
 ﻿using HutongGames.PlayMaker.Actions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using static VesselMayCrySE.AnimationHandler.AnimationLoader;
 using Object = UnityEngine.Object;
 
 namespace VesselMayCrySE
@@ -210,6 +212,29 @@ namespace VesselMayCrySE
             texture2D.anisoLevel = 0;
 
             return texture2D;
+        }
+
+        /// <summary>
+        /// Load
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static T? LoadJSONFile<T>(string path) where T : class
+        {
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+
+            T? result = null;
+
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                string json = reader.ReadToEnd();
+
+                // Deserialize directly into your structure
+                result = JsonConvert.DeserializeObject<T>(json);
+            }
+
+            return result;
         }
 
         public static Sprite LoadSprite(string path)
