@@ -151,7 +151,7 @@ namespace VesselMayCrySE.Attacks.DevilSword
             {
                 GameManager.instance.StartCoroutine(ChargeUp());
             });
-            DriveCheckHoldState.AddAnimationAction(AnimationManager.GetDevilSwordAnimator().GetClipByName("Drive Antic"));
+            DriveCheckHoldState.AddAnimationAction(AnimationManager.GetDevilSwordAnimator().GetClipByName("DriveAntic"));
 
             FsmState DriveReleaseLargeState = fsm.AddState("Drive Release Large");
             DriveReleaseLargeState.AddMethod(_ =>

@@ -1,0 +1,125 @@
+﻿{
+    "custom": {
+        "SlashEffect": {
+            "fps": 30,
+            "triggers": {
+                "2": "",
+                "4": "RedSlash"
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "SlashAltEffect": {
+            "fps": 30,
+            "triggers": {
+                "2": "",
+                "4": "RedSlash"
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "SlashUpEffect": {
+            "fps": 30,
+            "triggers": {
+                "2": "",
+                "4": "RedSlash"
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "DownspikeEffect": {
+            "fps": 20,
+            "triggers": {
+                "1": "",
+                "4": ""
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "Downspike": {
+            "fps": 16,
+            "triggers": {},
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "DownSpikeRed": {
+            "fps": 16,
+            "triggers": {},
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "DownspikeAntic": {
+            "fps": 18,
+            "triggers": {},
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "Dashstab": {
+            "fps": 18,
+            "triggers": {},
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "HighTimeEffect": {
+            "fps": 24,
+            "triggers": {
+                "3": "RedSlash"
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "Reactor": {
+            "fps": 36,
+            "triggers": {},
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "RoundTripEffect": {
+            "fps": 24,
+            "triggers": {},
+            "loop": true,
+            "loopfromframe": 0
+        },
+        "ChaserBladeIdle": {
+            "fps": 24,
+            "triggers": {},
+            "loop": true,
+            "loopfromframe": 0
+        }
+    },
+    "cloned": {
+        "DriveSlash": {
+            "original": "Slash_Charged",
+            "library": "Shaman",
+            "fps": 40
+        },
+        "RoundTripAntic": {
+            "original": "Slash_Charged",
+            "library": "Shaman",
+            "fps": 35
+        },
+        "DriveSlashFast": {
+            "original": "Slash_Charged",
+            "library": "Shaman",
+            "fps": 80
+        },
+        "MillionStab": {
+            "original": "Slash_Charged Effect",
+            "library": "Wanderer",
+            "fps": 20
+        },
+        "MillionStabFast": {
+            "original": "Slash_Charged Effect",
+            "library": "Wanderer",
+            "fps": 30
+        },
+        "DashStabEffect": {
+            "original": "DashStabEffect",
+            "library": "Hunter",
+            "fps": 24,
+            "triggers": {
+                "4": "RedSlash"
+            }
+        }
+    }
+}

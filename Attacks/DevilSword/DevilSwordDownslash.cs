@@ -29,7 +29,7 @@ namespace VesselMayCrySE.Attacks.DevilSword
             redslash.name = AttackNames.REDSLASH;
             redslash.GetComponent<DamageEnemies>().silkGeneration = HitSilkGeneration.None;
             redslash.GetComponent<DamageEnemies>().nailDamageMultiplier *= 0.3f;
-            redslash.GetComponent<NailSlash>().animName = "DownSpike Red";
+            redslash.GetComponent<NailSlash>().animName = "DownSpikeRed";
             redslash.GetComponent<NailSlash>().hc = HeroController.instance;
 
             redslashObject = redslash;
@@ -67,13 +67,13 @@ namespace VesselMayCrySE.Attacks.DevilSword
             //Antic State
 
             FsmState DevilDownslashAnticState = fsm.AddState("Devilsword Downslash Antic");
-            DevilDownslashAnticState.AddAnimationAction(AnimationManager.GetDevilSwordAnimator().GetClipByName("DownSpike Antic"));
+            DevilDownslashAnticState.AddAnimationAction(AnimationManager.GetDevilSwordAnimator().GetClipByName("DownspikeAntic"));
             DevilDownslashAnticState.AddWatchAnimationAction("FINISHED");
 
             //Slash state
 
             FsmState DevilDownslashState = fsm.AddState("Devilsword Downslash");       
-            DevilDownslashState.AddAnimationAction(AnimationManager.GetDevilSwordAnimator().GetClipByName("DownSpike"));
+            DevilDownslashState.AddAnimationAction(AnimationManager.GetDevilSwordAnimator().GetClipByName("Downspike"));
             DevilDownslashState.AddWatchAnimationAction("ANIM END");
             DevilDownslashState.AddMethod(_ =>
             {

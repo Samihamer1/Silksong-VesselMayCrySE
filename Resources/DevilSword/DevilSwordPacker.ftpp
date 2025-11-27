@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "version": "0.6.7"
+  },
+  "savePath": "D:\\code\\Silksong mods\\VesselMayCrySE\\Resources\\DevilSword",
+  "images": [],
+  "folders": [
+    "D:/code/Silksong mods/VesselMayCrySE/Resources/DevilSword/DevilSwordSprites"
+  ],
+  "packOptions": {
+    "textureName": "DevilSwordAtlas",
+    "textureFormat": "png",
+    "removeFileExtension": false,
+    "prependFolderName": true,
+    "base64Export": false,
+    "tinify": false,
+    "tinifyKey": "",
+    "scale": 1,
+    "filter": "none",
+    "exporter": "JSON (hash)",
+    "fileName": "pack-result",
+    "savePath": "D:\\code\\Silksong mods\\VesselMayCrySE\\Resources\\DevilSword",
+    "width": 2048,
+    "height": 2048,
+    "fixedSize": false,
+    "powerOfTwo": false,
+    "padding": 0,
+    "extrude": 0,
+    "allowRotation": false,
+    "allowTrim": true,
+    "trimMode": "trim",
+    "alphaThreshold": "0",
+    "detectIdentical": true,
+    "packer": "MaxRectsBin",
+    "packerMethod": "BestShortSideFit"
+  }
+}

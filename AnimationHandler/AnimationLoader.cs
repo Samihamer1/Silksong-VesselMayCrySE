@@ -1,14 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static Mono.Security.X509.X520;
-using static tk2dSpriteAnimationClip;
-using static VesselMayCrySE.AnimationHandler.AnimationLoader;
 
 namespace VesselMayCrySE.AnimationHandler
 {
@@ -60,10 +57,28 @@ namespace VesselMayCrySE.AnimationHandler
 
         #endregion
 
-        #region Deseralisation classes for AnimationDataRoot
+        #region Deseralisation classes for AnimationDatabase
 
-        public class AnimationData
+        public class AnimationDatabase
         {
+            public Dictionary<string, CustomAnimationData> custom { get; set; }
+
+            public Dictionary<string, ClonedAnimationData> cloned { get; set; }
+        }
+
+        public class ClonedAnimationData
+        {
+            public string original { get; set; }
+
+            public string library { get; set; }
+            public Dictionary<string, string> triggers { get; set; }
+
+            public int fps { get; set; }
+        }
+
+        public class CustomAnimationData
+        {
+            public string alias { get; set; }
             public int fps { get; set; }
 
             public Dictionary<string, string> triggers { get; set; }
@@ -78,19 +93,98 @@ namespace VesselMayCrySE.AnimationHandler
         public static void LoadAtlasAnimationsTo(tk2dSpriteAnimation library, string atlasPath, string atlasJsonPath, string animDataJsonPath)
         {
             Texture2D atlasTexture = ResourceLoader.LoadTexture2D(atlasPath);
-            AtlasRoot? atlasData = ResourceLoader.LoadJSONFile<AtlasRoot>("VesselMayCrySE.Resources.testatlas.json");
+            AtlasRoot? atlasData = ResourceLoader.LoadJSONFile<AtlasRoot>(atlasJsonPath);
             if (atlasData == null) { VesselMayCrySEPlugin.Instance.LogError($"JSON at {atlasJsonPath} not found."); return; }
 
-            Dictionary<string, AnimationData>? animationData = ResourceLoader.LoadJSONFile<Dictionary<string, AnimationData>>("VesselMayCrySE.Resources.testanimdata.json");
-            if (animationData == null) { VesselMayCrySEPlugin.Instance.LogError($"JSON at {atlasJsonPath} not found."); return; }
+            AnimationDatabase? animationDatabase = ResourceLoader.LoadJSONFile<AnimationDatabase>(animDataJsonPath);
+            if (animationDatabase == null) { VesselMayCrySEPlugin.Instance.LogError($"JSON at {animDataJsonPath} not found."); return; }
 
+            //Load custom animations
+            Dictionary<string, CustomAnimationData> customAnimationData = animationDatabase.custom;
+            if (customAnimationData != null)
+            {
+                LoadCustomAnimationsTo(library, atlasTexture, atlasData, customAnimationData);
+            }
+
+            //Load cloned animations
+            Dictionary<string, ClonedAnimationData> clonedAnimationData = animationDatabase.cloned;
+            if (clonedAnimationData != null)
+            {
+                LoadClonedAnimationsTo(library, clonedAnimationData);
+            }
+        }
+
+        private static void LoadClonedAnimationsTo(tk2dSpriteAnimation library, Dictionary<string, ClonedAnimationData> clonedAnimationData)
+        {
+            foreach (string animationName in clonedAnimationData.Keys)
+            {
+                ClonedAnimationData cloneData = clonedAnimationData[animationName];
+                string libraryName = "";
+
+                #region switchcase for library name
+                switch (cloneData.library.ToLower())
+                {
+                    case "hunter":
+                        libraryName = AnimationLibraryNames.DEFAULT;
+                        break;
+                    case "wanderer":
+                        libraryName = AnimationLibraryNames.WANDERER;
+                        break;
+                    case "architect":
+                        libraryName = AnimationLibraryNames.ARCHITECT;
+                        break;
+                    case "witch":
+                        libraryName = AnimationLibraryNames.WITCH;
+                        break;
+                    case "beast":
+                        libraryName = AnimationLibraryNames.BEAST;
+                        break;
+                    case "shaman":
+                        libraryName = AnimationLibraryNames.SHAMAN;
+                        break;
+                    case "reaper":
+                        libraryName = AnimationLibraryNames.REAPER;
+                        break;
+                    case "cloakless":
+                        libraryName = AnimationLibraryNames.CLOAKLESS;
+                        break;
+                    default:
+                        VesselMayCrySEPlugin.Instance.LogError($"Cloned animation {animationName} has invalid library name {cloneData.library}.");
+                        continue;
+                }
+                #endregion
+
+                AnimationManager.CloneAnimationTo(library.gameObject, libraryName, cloneData.original, animationName, cloneData.fps);
+
+                if (cloneData.triggers == null) { continue; }
+
+                //Adding triggers
+                foreach (string frame in cloneData.triggers.Keys)
+                {
+                    tk2dSpriteAnimationClip clip = library.GetClipByName(animationName);
+                    if (clip == null) { VesselMayCrySEPlugin.Instance.LogError($"Cloned animation {animationName} not found in library after cloning."); continue; }
+
+                    int frameNumber;
+                    if (!int.TryParse(frame, out frameNumber)) { VesselMayCrySEPlugin.Instance.LogError($"Cloned animation {animationName} has invalid trigger frame {frame}."); continue; }
+                    if (frameNumber < 1 || frameNumber > clip.frames.Length) { VesselMayCrySEPlugin.Instance.LogError($"Cloned animation {animationName} trigger frame {frameNumber} out of bounds."); continue; }
+
+                    tk2dSpriteAnimationFrame animFrame = clip.frames[frameNumber - 1];
+                    animFrame.triggerEvent = true;
+                    animFrame.eventInfo = cloneData.triggers[frame];
+                }
+            }
+        }
+
+        private static void LoadCustomAnimationsTo(tk2dSpriteAnimation library, Texture2D atlasTexture, AtlasRoot atlasData, Dictionary<string, CustomAnimationData> customAnimationData)
+        {
+            //Loads only custom animations from the atlas into the library
 
             List<string> names = new();
             List<Rect> regions = new();
             List<Vector2> anchors = new();
 
 
-            Dictionary<string, Dictionary<int,SpriteEntry>> animationSpriteLists = new(); // {AnimationName, {{1, SpriteEntry1}, {2, SpriteEntry2}}}
+            Dictionary<string, Dictionary<int, SpriteEntry>> animationSpriteLists = new(); // {AnimationName, {{1, SpriteEntry1}, {2, SpriteEntry2}}}
 
             foreach (string key in atlasData.frames.Keys)
             {
@@ -116,7 +210,8 @@ namespace VesselMayCrySE.AnimationHandler
                 {
                     Dictionary<int, SpriteEntry> dictionary = animationSpriteLists[animationKey];
                     dictionary[frameNumber] = atlasData.frames[key];
-                } else
+                }
+                else
                 {
                     animationSpriteLists.Add(animationKey, new Dictionary<int, SpriteEntry>
                     {
@@ -135,13 +230,13 @@ namespace VesselMayCrySE.AnimationHandler
 
                 #region setup frames
                 //To search frames in order
-                for (int i = 1; i < count+1; i++)
-                {                   
+                for (int i = 1; i < count + 1; i++)
+                {
                     if (!spriteEntries.ContainsKey(i)) { VesselMayCrySEPlugin.Instance.LogError($"{animationName} frame {i} expected but not found!"); continue; }
                     SpriteEntry spriteEntry = spriteEntries[i];
 
                     //Searching for animation data
-                    if (!animationData.ContainsKey(animationName)) { continue; }
+                    if (!customAnimationData.ContainsKey(animationName)) { continue; }
 
                     //Checking frame is not null
                     Frame frame = spriteEntry.frame;
@@ -172,7 +267,7 @@ namespace VesselMayCrySE.AnimationHandler
             //Creating collection data
             tk2dSpriteCollectionData data = tk2dSpriteCollectionData.CreateFromTexture(
                 atlasTexture,
-                tk2dSpriteCollectionSize.PixelsPerMeter(100f),
+                tk2dSpriteCollectionSize.PixelsPerMeter((float)(128f / Math.Sqrt(AnimationManager.SPRITESCALE))), //its a hotfix since i cant be bothered to figure out why the sprite seems so small
                 names.ToArray(),
                 regions.ToArray(),
                 anchors.ToArray());
@@ -186,16 +281,22 @@ namespace VesselMayCrySE.AnimationHandler
             //loading each animation
             foreach (string animationName in animationSpriteLists.Keys)
             {
-                if (!animationData.ContainsKey(animationName)) { continue; }
-                AnimationData animData = animationData[animationName];
-                
+                if (!customAnimationData.ContainsKey(animationName)) { continue; }
+                CustomAnimationData animData = customAnimationData[animationName];
+
+                string clipName = animationName;
+                if (animData.alias != null)
+                {
+                    clipName = animData.alias;
+                }
+
                 int frameCount = animationSpriteLists[animationName].Count;
 
-                LoadSingleAnimationTo(library, animationName, data, animData, frameCount);
+                LoadSingleAnimationTo(library, animationName, clipName, data, animData, frameCount);
             }
         }
 
-        private static void LoadSingleAnimationTo(tk2dSpriteAnimation library, string animationName, tk2dSpriteCollectionData data, AnimationData animData, int frameCount)
+        private static void LoadSingleAnimationTo(tk2dSpriteAnimation library, string animationName, string clipName, tk2dSpriteCollectionData data, CustomAnimationData animData, int frameCount)
         {
             List<tk2dSpriteAnimationClip> list = library.clips.ToList<tk2dSpriteAnimationClip>();
             data.material.shader = HeroController.instance.GetComponent<MeshRenderer>().material.shader;
@@ -238,16 +339,6 @@ namespace VesselMayCrySE.AnimationHandler
             library.clips = list.ToArray();
             library.isValid = false; //to refresh the animation lookup
             library.ValidateLookup();
-        }
-
-        public static void Test()
-        {
-            LoadAtlasAnimationsTo(
-                AnimationManager.GetBalrogAnimator().GetComponent<tk2dSpriteAnimation>(),
-                "VesselMayCrySE.Resources.testatlas.png",
-                "VesselMayCrySE.Resources.testatlas.json",
-                "VesselMayCrySE.Resources.testanimdata.json"
-            );
         }
     }
 }

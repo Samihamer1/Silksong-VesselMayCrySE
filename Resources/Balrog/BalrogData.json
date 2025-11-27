@@ -1,0 +1,47 @@
+﻿{
+    "custom": {
+        "SlashEffect": {
+            "fps": 24,
+            "triggers": {
+                "1": ""
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "SlashEffectAlt": {
+            "fps": 24,
+            "triggers": {
+                "1": ""
+            },
+            "loop": false,
+            "loopfromframe": 0
+        }
+    },
+    "cloned": {
+        "DownSlash Antic": {
+            "original": "DownSpike Antic",
+            "library": "Architect",
+            "fps": 24
+        },
+        "DownSlash": {
+            "original": "DownSpike",
+            "library": "Architect",
+            "fps": 24
+        },
+        "Dash Attack Antic": {
+            "original": "Dash Attack Antic",
+            "library": "Wanderer",
+            "fps": 24
+        },
+        "Dash Attack": {
+            "original": "Dash Attack 1",
+            "library": "Witch",
+            "fps": 24
+        },
+        "Dash Attack Recover": {
+            "original": "Dash Attack Recover",
+            "library": "Witch",
+            "fps": 24
+        }
+    }
+}

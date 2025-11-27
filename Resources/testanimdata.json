@@ -1,10 +1,19 @@
 ﻿{
-    "RevolverEffect": {
-        "fps": 7,
-        "triggers": {
-            "1": "RedSlash"
-        },
-        "loop": true,
-        "loopfromframe": 0
+    "custom": {
+        "RevolverEffect": {
+            "fps": 7,
+            "triggers": {
+                "1": "RedSlash"
+            },
+            "loop": true,
+            "loopfromframe": 0
+        }
+    },
+    "cloned": {
+        "DownSpike Antic": {
+            "original": "DownSpike Antic",
+            "library": "Architect",
+            "fps": 6
+        }
     }
 }

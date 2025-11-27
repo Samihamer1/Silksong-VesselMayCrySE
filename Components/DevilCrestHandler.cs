@@ -128,7 +128,7 @@ namespace VesselMayCrySE.Components
 
             //animation
             spriteObject.GetComponent<tk2dSpriteAnimator>().library = AnimationManager.GetDevilSwordAnimator();
-            spriteObject.GetComponent<tk2dSpriteAnimator>().Play("ChaserBlade Idle");
+            spriteObject.GetComponent<tk2dSpriteAnimator>().Play("ChaserBladeIdle");
 
             clone.transform.parent = chaserRoot.transform;
             clone.transform.localPosition = new Vector3(0, 0, 0);

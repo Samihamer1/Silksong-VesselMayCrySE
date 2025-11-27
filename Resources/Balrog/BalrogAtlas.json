@@ -1,0 +1,279 @@
+{
+  "frames": {
+    "BalrogSprites/Slash/4.png": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 106,
+        "h": 206
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 50,
+        "y": 7,
+        "w": 106,
+        "h": 206
+      },
+      "sourceSize": {
+        "w": 203,
+        "h": 227
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BalrogSprites/Slash/2.png": {
+      "frame": {
+        "x": 0,
+        "y": 206,
+        "w": 144,
+        "h": 204
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 7,
+        "w": 144,
+        "h": 204
+      },
+      "sourceSize": {
+        "w": 203,
+        "h": 227
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BalrogSprites/Slash/1.png": {
+      "frame": {
+        "x": 106,
+        "y": 0,
+        "w": 136,
+        "h": 181
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 51,
+        "y": 28,
+        "w": 136,
+        "h": 181
+      },
+      "sourceSize": {
+        "w": 203,
+        "h": 227
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BalrogSprites/SlashEffect/3.png": {
+      "frame": {
+        "x": 0,
+        "y": 410,
+        "w": 150,
+        "h": 71
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 22,
+        "y": 3,
+        "w": 150,
+        "h": 71
+      },
+      "sourceSize": {
+        "w": 194,
+        "h": 84
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BalrogSprites/SlashEffectAlt/1.png": {
+      "frame": {
+        "x": 144,
+        "y": 181,
+        "w": 161,
+        "h": 67
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 9,
+        "y": 11,
+        "w": 161,
+        "h": 67
+      },
+      "sourceSize": {
+        "w": 194,
+        "h": 84
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BalrogSprites/SlashEffect/1.png": {
+      "frame": {
+        "x": 144,
+        "y": 248,
+        "w": 122,
+        "h": 63
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 11,
+        "y": 9,
+        "w": 122,
+        "h": 63
+      },
+      "sourceSize": {
+        "w": 194,
+        "h": 84
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BalrogSprites/SlashEffect/2.png": {
+      "frame": {
+        "x": 144,
+        "y": 311,
+        "w": 133,
+        "h": 58
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 23,
+        "y": 17,
+        "w": 133,
+        "h": 58
+      },
+      "sourceSize": {
+        "w": 194,
+        "h": 84
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BalrogSprites/SlashEffectAlt/2.png": {
+      "frame": {
+        "x": 266,
+        "y": 248,
+        "w": 146,
+        "h": 57
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 28,
+        "y": 13,
+        "w": 146,
+        "h": 57
+      },
+      "sourceSize": {
+        "w": 194,
+        "h": 84
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BalrogSprites/SlashEffectAlt/3.png": {
+      "frame": {
+        "x": 242,
+        "y": 0,
+        "w": 127,
+        "h": 52
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 50,
+        "y": 14,
+        "w": 127,
+        "h": 52
+      },
+      "sourceSize": {
+        "w": 194,
+        "h": 84
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BalrogSprites/Slash/5.png": {
+      "frame": {
+        "x": 106,
+        "y": 0,
+        "w": 136,
+        "h": 181
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 51,
+        "y": 28,
+        "w": 136,
+        "h": 181
+      },
+      "sourceSize": {
+        "w": 203,
+        "h": 227
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "BalrogSprites/Slash/3.png": {
+      "frame": {
+        "x": 0,
+        "y": 206,
+        "w": 144,
+        "h": 204
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 7,
+        "w": 144,
+        "h": 204
+      },
+      "sourceSize": {
+        "w": 203,
+        "h": 227
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "BalrogAtlas.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 412,
+      "h": 481
+    },
+    "scale": 1
+  }
+}

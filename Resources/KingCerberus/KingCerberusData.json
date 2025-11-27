@@ -1,0 +1,148 @@
+﻿{
+    "custom": {
+        "SlashEffect": {
+            "fps": 30,
+            "triggers": {
+                "2": "",
+                "4": "RedSlash"
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "SlashAltEffect": {
+            "fps": 30,
+            "triggers": {
+                "2": "",
+                "4": "RedSlash"
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "SlashUpEffect": {
+            "fps": 30,
+            "triggers": {
+                "2": "",
+                "4": "RedSlash"
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "SlashDownEffect": {
+            "fps": 30,
+            "triggers": {
+                "2": "",
+                "4": "RedSlash"
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "DashAttack": {
+            "alias": "Dash Attack",
+            "fps": 24,
+            "triggers": {
+                "2": "",
+                "4": "RedSlash"
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "DashAttackAntic": {
+            "alias": "Dash Attack Antic",
+            "fps": 10,
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "RevolverEffect": {
+            "fps": 24,
+            "triggers": {
+                "1": "RedSlash"
+            },
+            "loop": true,
+            "loopfromframe": 0
+        },
+        "SwingEffect": {
+            "fps": 24,
+            "triggers": {
+                "1": "",
+                "3": "RedSlash"
+            },
+            "loop": false,
+            "loopfromframe": 0
+        },
+        "HotStuffEffect": {
+            "fps": 24,
+            "triggers": {
+                "2": ""
+            },
+            "loop": false,
+            "loopfromframe": 0
+        }
+    },
+    "cloned": {
+        "Slash": {
+            "original": "Slash",
+            "library": "Witch",
+            "fps": 24
+        },
+        "SlashAlt": {
+            "original": "SlashAlt",
+            "library": "Witch",
+            "fps": 24
+        },
+        "DownSlash": {
+            "original": "DownSlash",
+            "library": "Wanderer",
+            "fps": 24
+        },
+        "Dash Attack Recover": {
+            "original": "Dash Attack Recover",
+            "library": "Hunter",
+            "fps": 18
+        },
+        "DashStabEffect": {
+            "original": "DashStabEffect",
+            "library": "Cloakless",
+            "fps": 24
+        },
+        "DashStabEffect_Glow": {
+            "original": "DashStabEffect_Glow",
+            "library": "Cloakless",
+            "fps": 24
+        },
+        "Revolver": {
+            "original": "DownSpikeBounce 1",
+            "library": "Hunter",
+            "fps": 65
+        },
+        "HotStuff": {
+            "original": "Slash_Charged",
+            "library": "Shaman",
+            "fps": 36
+        },
+        "Swing Antic": {
+            "original": "DownSpike Antic",
+            "library": "Reaper",
+            "fps": 15
+        },
+        "Swing": {
+            "original": "DownSpike",
+            "library": "Reaper",
+            "fps": 30
+        },
+        "Ice Age Antic": {
+            "original": "AirSphere Antic",
+            "library": "Hunter",
+            "fps": 40
+        },
+        "Ice Age": {
+            "original": "AirSphere Attack",
+            "library": "Hunter",
+            "fps": 24
+        },
+        "King Slayer Antic": {
+            "original": "Slash_Charged",
+            "library": "Witch",
+            "fps": 24
+        }
+    }
+}

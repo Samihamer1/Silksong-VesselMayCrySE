@@ -57,7 +57,7 @@ namespace VesselMayCrySE.Attacks.DevilSword
                 try
                 {
                     GameObject effect = CreateEffect();
-                    GameManager.instance.StartCoroutine(AnimationManager.PlayAnimationThenDestroy(effect.GetComponent<tk2dSpriteAnimator>(), "ReactorEffect"));
+                    GameManager.instance.StartCoroutine(AnimationManager.PlayAnimationThenDestroy(effect.GetComponent<tk2dSpriteAnimator>(), "Reactor"));
                     effect.transform.position = HeroController.instance.transform.position - new Vector3(0, 0.75f);
                     effect.SetActive(true);
 

@@ -38,7 +38,7 @@ namespace VesselMayCrySE.Attacks.DevilSword
                 HeroController.instance.GetComponent<SpriteFlash>().flashFocusHeal();
             });
 
-            ThrowAnticState.AddAnimationAction(AnimationManager.GetDevilSwordAnimator().GetClipByName("RoundTrip Antic"));
+            ThrowAnticState.AddAnimationAction(AnimationManager.GetDevilSwordAnimator().GetClipByName("RoundTripAntic"));
             ThrowAnticState.AddWatchAnimationActionTrigger("FINISHED");
 
             FsmState ThrowSwordState = fsm.AddState("Throw Round Trip");
