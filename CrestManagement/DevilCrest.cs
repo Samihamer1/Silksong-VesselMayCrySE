@@ -26,9 +26,38 @@ namespace VesselMayCrySE.CrestManagement
             if (sprintFSM == null) { VesselMayCrySEPlugin.Instance.LogError("VMCSE - Sprint not found."); return; }
 
             ReviveNailArts(nailartFSM);
-
+            PatchSprintFSM(sprintFSM);
 
             HeroController.instance.gameObject.AddComponent<DevilCrestHandler>();
+        }
+
+        private void PatchSprintFSM(PlayMakerFSM sprintFSM)
+        {
+            FsmState StartAttack = sprintFSM.GetState("Start Attack");
+            StartAttack.InsertMethod(0, _ =>
+            {
+                //I have problems with using return here sometimes, so I'll go with the less readable variant for functionality's sake.
+                if (DevilCrestHandler.Instance != null) { 
+                    if (DevilCrestHandler.Instance.IsDevilEquipped())
+                    {
+                        sprintFSM.SendEvent("DEVIL");
+                    }
+                }
+            });
+
+            FsmState DevilAttack = sprintFSM.AddState("Devil Attack Select");
+            DevilAttack.AddMethod(_ =>
+            {
+                sprintFSM.GetBoolVariable("Did First Slash").value = false;
+                sprintFSM.GetBoolVariable("In Attack").value = true;
+                HeroController.instance.IncrementAttackCounter();
+                HeroController.instance.SetCState("isSprinting", false);
+
+                SendWeaponEvent(sprintFSM);
+            });
+
+            StartAttack.AddTransition("DEVIL", DevilAttack.name);
+            DevilAttack.AddTransition("FINISHED", "Set Attack Single"); //Just in case of failure
         }
 
         private void ReviveNailArts(PlayMakerFSM nailartFSM)

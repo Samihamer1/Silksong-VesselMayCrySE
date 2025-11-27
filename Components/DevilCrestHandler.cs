@@ -200,6 +200,9 @@ namespace VesselMayCrySE.Components
             KingCerberusWeapon kingCerberus = new KingCerberusWeapon();
             allWeapons.Add(kingCerberus);
 
+            BalrogWeapon balrog = new BalrogWeapon();
+            allWeapons.Add(balrog);
+
             EquipWeapon(devilSword);
         }
 

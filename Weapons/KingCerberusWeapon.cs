@@ -124,7 +124,7 @@ namespace VesselMayCrySE.Weapons
 
             objectInfo.slashUpObject = cerberusSlashUp;
 
-            //Slash up
+            //Slash down
             GameObject cerberusSlashDown = new GameObject("KingCerberus SlashDown");
             cerberusSlashDown.transform.parent = devilroot.transform;
             cerberusSlashDown.transform.localPosition = new Vector3(0, -1.5f, -0.001f);

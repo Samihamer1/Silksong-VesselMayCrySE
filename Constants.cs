@@ -13,6 +13,7 @@ namespace VesselMayCrySE
         public static readonly string REAPER = "Hornet CrestWeapon Scythe Anim";
         public static readonly string BEAST = "Hornet CrestWeapon Warrior Anim";
         public static readonly string CLOAKLESS = "Hornet Cloakless Anim";
+        public static readonly string ARCHITECT = "Hornet CrestWeapon Drill Lance Anim";
         public static readonly string DEFAULT = "Knight";
     }
 
@@ -27,12 +28,14 @@ namespace VesselMayCrySE
     {
         public static readonly string DEVILSWORD = "DevilSword";
         public static readonly string KINGCERBERUS = "KingCerberus";
+        public static readonly string BALROG = "Balrog";
     }
 
     internal static class EventNames
     {
         public static readonly string DEVILSWORD = "DEVILSWORD";
         public static readonly string KINGCERBERUS = "KINGCERBERUS";
+        public static readonly string BALROG = "BALROG";
         public static readonly string REACTOR = "REACTOR";
         public static readonly string DRIVE = "DRIVE";
         public static readonly string ROUNDTRIP = "ROUNDTRIP";

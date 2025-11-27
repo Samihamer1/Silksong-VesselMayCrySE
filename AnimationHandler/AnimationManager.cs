@@ -14,7 +14,7 @@ namespace VesselMayCrySE.AnimationHandler
     public static class AnimationManager
     {
         public const float SPRITESCALE = 3.25f;
-        private static GameObject? VMCSEAnimationCollections;
+        public static GameObject? VMCSEAnimationCollections;
         private static GameObject? DevilSwordAnimator;
         private static GameObject? KingCerberusAnimator;
         private static GameObject? BalrogAnimator;
@@ -193,6 +193,33 @@ namespace VesselMayCrySE.AnimationHandler
             #region Balrog animations
 
             BalrogAnimator = CreateAnimationObject("Balrog Animations");
+
+            //Slash & SlashAlt
+            LoadAnimationTo(BalrogAnimator, "VesselMayCrySE.Resources.Balrog.Slash.spritesheet.png", "SlashAlt", 45, tk2dSpriteAnimationClip.WrapMode.Once,5, 203, 227);
+            LoadAnimationTo(BalrogAnimator, "VesselMayCrySE.Resources.Balrog.Slash.spritesheet.png", "Slash", 45, tk2dSpriteAnimationClip.WrapMode.Once, 5, 203, 227);
+
+            LoadAnimationTo(BalrogAnimator, "VesselMayCrySE.Resources.Balrog.SlashEffect.spritesheet.png", "SlashEffect", 24, tk2dSpriteAnimationClip.WrapMode.Once, 3, 194, 84);
+            LoadAnimationTo(BalrogAnimator, "VesselMayCrySE.Resources.Balrog.SlashEffectAlt.spritesheet.png", "SlashEffectAlt", 24, tk2dSpriteAnimationClip.WrapMode.Once, 3, 194, 84);
+
+            SetFrameToTrigger(BalrogAnimator, "SlashEffect", 0);
+            SetFrameToTrigger(BalrogAnimator, "SlashEffectAlt", 0);
+            SetFrameToTriggerRedSlash(BalrogAnimator, "SlashEffect", 2);
+            SetFrameToTriggerRedSlash(BalrogAnimator, "SlashEffectAlt", 2);
+
+            //DownSlash Antic
+            CloneAnimationTo(BalrogAnimator, AnimationLibraryNames.ARCHITECT, "DownSpike Antic", "DownSlash Antic", 24);
+
+            //DownSlash
+            CloneAnimationTo(BalrogAnimator, AnimationLibraryNames.ARCHITECT, "DownSpike", "DownSlash", 24);
+
+            //Dash Attack Antic
+            CloneAnimationTo(BalrogAnimator, AnimationLibraryNames.WANDERER, "Dash Attack Antic", "Dash Attack Antic", 24);
+
+            //Dash Attack
+            CloneAnimationTo(BalrogAnimator, AnimationLibraryNames.WITCH, "Dash Attack 1", "Dash Attack", 24);
+
+            //Dash Attack Recover
+            CloneAnimationTo(BalrogAnimator, AnimationLibraryNames.WITCH, "Dash Attack Recover", "Dash Attack Recover", 24);
 
             #endregion
 

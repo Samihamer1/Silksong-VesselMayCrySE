@@ -1,0 +1,10 @@
+﻿{
+    "RevolverEffect": {
+        "fps": 7,
+        "triggers": {
+            "1": "RedSlash"
+        },
+        "loop": true,
+        "loopfromframe": 0
+    }
+}

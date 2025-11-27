@@ -151,6 +151,23 @@ namespace VesselMayCrySE.Attacks.Slashes
             redSlash.SetDownAttack();
         }
 
+        public void RemoveRecoil()
+        {
+            TryInit();
+            nailSlash.dontAddRecoiler = true;
+
+
+            NailSlashRecoil recoil = gameObject.GetComponent<NailSlashRecoil>();
+            if (recoil != null) {
+                GameObject.Destroy(recoil);
+            }
+
+            //Changing for the RedSlash if possible
+            if (redSlash == null) { return; }
+
+            redSlash.RemoveRecoil();
+        }
+
         public void SetColliderSize(string SlashPrefabName)
         {
             TryInit();
@@ -217,6 +234,28 @@ namespace VesselMayCrySE.Attacks.Slashes
             if (redSlash == null) { return; }
 
             redSlash.SetAudioClip(clip);
+        }
+
+        public void CreateNailTravel(Vector2 distance, float duration)
+        {
+            NailSlashTravel travel = gameObject.AddComponent<NailSlashTravel>();
+            travel.Reset();
+            travel.Awake();
+
+            travel.maxXOffset = new TeamCherry.SharedUtils.OverrideFloat { IsEnabled = false, Value = 0 };
+            travel.maxYOffset = new TeamCherry.SharedUtils.OverrideFloat { IsEnabled = false, Value = 0 };
+
+            travel.travelCurve = new AnimationCurve
+            {
+                keys = new Keyframe[]
+                {
+                    new Keyframe(0,0),
+                    new Keyframe(1,1)
+                }
+            };
+
+            travel.travelDistance = distance;
+            travel.travelDuration = duration;
         }
 
 

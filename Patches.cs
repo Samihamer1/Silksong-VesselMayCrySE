@@ -57,6 +57,19 @@ public static class Patches
         }
     }
 
+    //Nail Art charge while relinquished patch
+    [HarmonyPatch(typeof(HeroController), nameof(HeroController.instance.SetAllowNailChargingWhileRelinquished))]
+    [HarmonyPostfix]
+    private static void NailChargeWhileRelinquished(ref bool value)
+    {
+        if (DevilCrestHandler.Instance != null) {
+            if (DevilCrestHandler.Instance.IsDevilEquipped())
+            {
+                HeroController.instance.allowNailChargingWhileRelinquished = true;
+            }
+        }
+    }
+
     //Patching TakeDamage to know when enemies are hit
     [HarmonyPatch(typeof(HealthManager), nameof(HealthManager.TakeDamage))]
     [HarmonyPrefix]
@@ -103,7 +116,6 @@ public static class Patches
         
 
         handler.GotHit();
-        VesselMayCrySEPlugin.Instance.log(damageAmount.ToString());
     }
 
     //for the skill icons
